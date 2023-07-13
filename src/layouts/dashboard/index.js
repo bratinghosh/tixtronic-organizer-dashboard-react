@@ -13,6 +13,11 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
+/* eslint-disable */
+
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
 // @mui material components
 import Grid from "@mui/material/Grid";
 
@@ -31,6 +36,7 @@ import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatist
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 
+
 // Dashboard components
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
@@ -38,17 +44,40 @@ import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
 
+  const [loading, setLoading] = useState(true);
+  const [totalMintsData, setTotalMintsData] = useState();
+
+  useEffect(() => {
+    const baseUrl = "http://localhost:3001/analytics";
+    fetchDataHelper(baseUrl + "/mint/totalticketsminted", setTotalMintsData);
+  }, []);
+
+  const fetchDataHelper = async (url, setDataFunction) => {
+    axios
+      .get(url)
+      .then((response) => {
+        setLoading(true);
+        setDataFunction(response.data.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   return (
-    <DashboardLayout>
+    <>
+      {loading ? <div>Loading...</div> : 
+      <DashboardLayout>
       <MDBox py={3}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
-                color="dark"
-                icon="weekend"
-                title="Bookings"
-                count={281}
+                color="info"
+                icon="confirmation_number_icon"
+                title="Total Mints"
+                count={totalMintsData.totalticketsminted}
                 percentage={{
                   color: "success",
                   amount: "+55%",
@@ -155,6 +184,7 @@ function Dashboard() {
         </MDBox>
       </MDBox>
     </DashboardLayout>
+    }</>
   );
 }
 
