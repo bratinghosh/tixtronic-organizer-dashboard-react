@@ -37,6 +37,7 @@ Coded by www.creative-tim.com
 
 // Material Dashboard 2 React layouts
 import Dashboard from "layouts/dashboard";
+import Admin from "layouts/admin";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -49,6 +50,14 @@ const routes = [
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
     component: <Dashboard />,
+  },
+  {
+    type: "collapse",
+    name: "Admin",
+    key: "admin",
+    icon: <Icon fontSize="small">local_activity</Icon>,
+    route: "/admin",
+    component: <Admin />,
   },
 ];
 

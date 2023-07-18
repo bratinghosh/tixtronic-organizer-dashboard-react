@@ -123,6 +123,10 @@ export default function App() {
       return null;
     });
 
+  const refreshPage = () => {
+    window.location.reload(false);
+  };
+
   const refreshButton = (
     <MDBox
       display="flex"
@@ -139,7 +143,9 @@ export default function App() {
       zIndex={99}
       color="dark"
       sx={{ cursor: "pointer" }}
-      onClick={null}
+      onClick={() => {
+        refreshPage();
+      }}
     >
       <Icon fontSize="small" color="info">
         refresh

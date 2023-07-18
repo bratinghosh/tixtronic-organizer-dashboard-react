@@ -69,7 +69,7 @@ function Dashboard() {
 
   return (
     <>
-      {loading ? <div>Loading...</div> : 
+      {loading ? <DashboardLayout>Loading...</DashboardLayout> : 
       <DashboardLayout>
       <MDBox py={3}>
         <Grid container spacing={3}>
