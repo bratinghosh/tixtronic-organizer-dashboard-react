@@ -109,10 +109,30 @@ function Admin() {
             alert('Wait for contract to pause on blockchain and try after some time')
         }
     }
-
-    const UnPauseContract = () => {
-        // code to un-pause contract
-    };
+    const UnPauseContract = async () => {
+        // code to pause contract(solidity api call) and tranfer mapping to verification backend(backend api call)
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner()
+        const contract = new ethers.Contract(process.env.REACT_APP_CONTRACT_ADDRESS, Ticketing.abi, signer);
+        try {
+            if (paused) {
+                await contract.unpause();
+                setPaused(false)
+            }
+            else {
+                alert('Contract already unpaused')
+            }
+        } catch (e) {
+            console.log("Err: ", e.code)
+            if (e.code === 'UNPREDICTABLE_GAS_LIMIT') {
+                alert('Contract already unpaused')
+                setPaused(false)
+            }
+            else {
+                alert('Unpause failed, try again')
+            }
+        }
+    }
 
     return (
         <>
