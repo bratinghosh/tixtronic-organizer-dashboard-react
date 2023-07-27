@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import axios from "axios";
 
-import { QrReader } from 'react-qr-reader';
+// import { QrReader } from 'react-qr-reader';
 
 import detectEthereumProvider from '@metamask/detect-provider'
 import { ethers } from 'ethers'
@@ -20,13 +20,45 @@ import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import MDButton from "components/MDButton";
 
+import { Html5QrcodeScanner } from "html5-qrcode";
+
 function Admin() {
-    const [id, setId] = useState('');
+    // const [id, setId] = useState('No result');
 
     const initialState = { accounts: '' }
     const [wallet, setWallet] = useState(initialState)
 
     const [paused, setPaused] = useState(false)
+    
+    useEffect(() => {
+        const scanner = new Html5QrcodeScanner('reader', {
+            qrbox: {
+                width: 250,
+                height: 250,
+            },
+            fps: 0.5,
+        });
+    
+        scanner.render(success, () => {});
+    
+        function success(result) {
+            const id = result
+            // setId(id);
+            useTicket(id);
+        }
+    }, [])
+
+    const useTicket = (id) => {
+        // USE TICKET
+        axios.delete(process.env.REACT_APP_VERIFICATION_BACKEND_URL+"/tickets/"+id)
+        .then((response) => response.data)
+        .then((data) => {
+            alert(`Ticket ${data.ticket_id} used by Wallet Address ${data.wallet_address}`);
+        })
+        .catch((err) => {
+            alert(err.response.data.message);
+        });
+    }
 
     useEffect(() => {
         const refreshAccounts = (accounts) => {
@@ -103,6 +135,22 @@ function Admin() {
                 ticketMappingHashMap[ticketMapping[i]] === undefined ? ticketMappingHashMap[ticketMapping[i]] = [i] : ticketMappingHashMap[ticketMapping[i]].push(i)
             }
             console.log(ticketMappingHashMap)
+
+            // UPDATE TICKET MAPPING
+            axios.post(process.env.REACT_APP_VERIFICATION_BACKEND_URL+"/tickets/updatemapping", 
+                ticketMappingHashMap,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then((response) => response.data)
+                .then((data) => {
+                    alert(data.message);
+                })
+                .catch((err) => {
+                    alert(err.message);
+                });
         }
         catch (e) {
             console.log("Err: ", e)
@@ -217,11 +265,13 @@ function Admin() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                }}>
-                    <QrReader
+                }} id="reader">
+                    {/* <QrReader
                         onResult={(result, error) => {
                             if (!!result) {
-                                setId(result?.text);
+                                const id = result?.text;
+                                setId(id);
+                                // useTicket(id);
                             }
 
                             if (!!error) {
@@ -229,16 +279,16 @@ function Admin() {
                             }
                         }}
                         containerStyle={{ width: '50%', height: '50%' }}
-                    />
+                    /> */}
                 </div>
 
-                <div style={{
+                {/* <div style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                 }}>
                     {id}
-                </div>
+                </div> */}
             </DashboardLayout>
         </>
     );

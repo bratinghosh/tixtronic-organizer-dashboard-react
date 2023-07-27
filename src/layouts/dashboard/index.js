@@ -43,7 +43,7 @@ function Dashboard() {
   const [analytics, setAnalytics] = useState(undefined);
 
   useEffect(() => {
-    fetchDataHelper("http://localhost:3001/analytics", setAnalytics);
+    fetchDataHelper(process.env.REACT_APP_ANALYTICS_BACKEND_URL, setAnalytics);
   }, []);
 
   const fetchDataHelper = async (url, setDataFunction) => {
