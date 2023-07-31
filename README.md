@@ -12,7 +12,7 @@ Make sure the backends are running and the smart contract is deployed in the loc
 ```
 npm install
 ```
-3. Create `.env` file and the following:
+3. Create `.env` file and add the following:
 ```
 PORT=3001
 REACT_APP_CONTRACT_ADDRESS: Obtained when smart contract is deployed on local blockchain
